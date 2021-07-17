@@ -9,11 +9,12 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const { getMedicos,
         crearMedico,
         actualizarMedico,
-        borrarMedico
+        borrarMedico,
+        getMedicoById
     }= require('../controllers/medicos')
 const router = Router();
 
-router.get('/', getMedicos);
+router.get('/',validarJWT, getMedicos);
 
 router.post('/',
     [   validarJWT,
@@ -23,9 +24,12 @@ router.post('/',
     ] ,crearMedico);
 router.put('/:id',
     [   validarJWT,
-        check('nombre', 'El nombre es obligatorio').not().isEmpty(),
+        check('nombre', 'El nombre del medico es obligatorio').not().isEmpty(),
+        check('hospital', 'El id hospital debe ser valido').isMongoId(),
     ], actualizarMedico)
 
-router.delete('/:id', borrarMedico);
+router.delete('/:id', validarJWT, borrarMedico);
+
+router.get('/:id', validarJWT, getMedicoById);
 
 module.exports = router;
